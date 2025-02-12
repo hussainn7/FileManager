@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}My Files - File Exchange CMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#uploaded">Uploaded Files</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#purchased">Purchased Files</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Uploaded Files -->
+            <div class="tab-pane fade show active" id="uploaded">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>My Uploaded Files</h4>
+                    <a href="{{ url_for('files.upload') }}" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload New File
+                    </a>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for file in current_user.files %}
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ file.name }}</h5>
+                                    <p class="card-text">{{ file.description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">{{ file.price }} tokens</span>
+                                        <small class="text-muted">
+                                            {{ file.created_at.strftime('%Y-%m-%d') }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="btn-group w-100">
+                                        <a href="{{ url_for('files.download', file_id=file.id) }}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                You haven't uploaded any files yet.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Purchased Files -->
+            <div class="tab-pane fade" id="purchased">
+                <h4 class="mb-4">My Purchased Files</h4>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for purchase in current_user.purchases %}
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ purchase.file.name }}</h5>
+                                    <p class="card-text">{{ purchase.file.description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            Purchased: {{ purchase.created_at.strftime('%Y-%m-%d') }}
+                                        </small>
+                                        <small class="text-muted">
+                                            from {{ purchase.file.owner.username }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="btn-group w-100">
+                                        <a href="{{ url_for('files.download', file_id=purchase.file.id) }}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                You haven't purchased any files yet.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

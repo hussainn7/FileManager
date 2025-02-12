@@ -1,0 +1,24 @@
+AddHandler fcgid-script .fcgi
+Options +FollowSymLinks +ExecCGI
+
+RewriteEngine On
+RewriteBase /
+
+# Serve static files directly
+RewriteCond %{REQUEST_URI} ^/static/
+RewriteRule ^static/(.*)$ public_html/static/$1 [L]
+
+# Route everything else through passenger_wsgi.py
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ passenger_wsgi.py/$1 [QSA,L]
+
+# Handle HTTPS redirect
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Handle www redirect
+RewriteCond %{HTTP_HOST} ^www\.getecu\.ru$ [NC]
+RewriteRule ^(.*)$ https://getecu.ru/$1 [L,R=301]
+
+# Set server name
+ServerName getecu.ru 

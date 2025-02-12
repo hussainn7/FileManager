@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Balance - File Exchange CMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Balance Card -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Current Balance</h5>
+                <h2 class="display-4 mb-4">{{ current_user.balance }} <small>tokens</small></h2>
+                <a href="{{ url_for('payments.deposit') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus-circle"></i> Add Tokens
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Transaction History</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if transaction.transaction_type == 'deposit' %}
+                                        <span class="badge bg-success">Deposit</span>
+                                    {% elif transaction.transaction_type == 'purchase' %}
+                                        <span class="badge bg-primary">Purchase</span>
+                                    {% elif transaction.transaction_type == 'sale' %}
+                                        <span class="badge bg-info">Sale</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.amount > 0 %}
+                                        <span class="text-success">+{{ transaction.amount }}</span>
+                                    {% else %}
+                                        <span class="text-danger">{{ transaction.amount }}</span>
+                                    {% endif %}
+                                    tokens
+                                </td>
+                                <td>
+                                    {% if transaction.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elif transaction.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif transaction.status == 'failed' %}
+                                        <span class="badge bg-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No transactions yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
