@@ -48,4 +48,5 @@ instance/
 tmp/
 
 # Local development
-.DS_Store 
+.DS_Store
+
